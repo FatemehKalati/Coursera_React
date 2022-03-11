@@ -31,3 +31,14 @@ address {
 .navbar-dark {
   background-color: #512da8;
 }
+.nav-link {
+  color: floralwhite;
+}
+.nav-pills .nav-link.active {
+  color: floralwhite;
+  background-color: #9575cd;
+}
+
+.nav-link:hover {
+  color: gray;
+}
