@@ -18,6 +18,7 @@ import {
 import { Control, LocalForm, Errors } from "react-redux-form";
 import { Link, useParams } from "react-router-dom";
 import { addComment } from "../redux/ActionCreators";
+import { Loading } from "./LoadingComponent";
 
 class CommentForm extends Component {
   constructor(props) {
@@ -219,14 +220,30 @@ function RenderComments({ comments, addComment, dishId }) {
 
 const DishDetail = (props) => {
   let params = useParams();
-  let dish = props.dishes.filter(
+  let dish = props.dishes.dishes.filter(
     (dish) => dish.id === parseInt(params.dishId, 10)
   )[0];
   let comments = props.comments.filter(
     (comment) => comment.dishId === parseInt(params.dishId, 10)
   );
 
-  if (dish != null) {
+  if (props.isLoading) {
+    return (
+      <div className="container">
+        <div className="row">
+          <Loading />
+        </div>
+      </div>
+    );
+  } else if (props.errMess) {
+    return (
+      <div className="container">
+        <div className="row">
+          <h4>{props.errMess}</h4>
+        </div>
+      </div>
+    );
+  } else if (dish != null) {
     return (
       <div className="container">
         <div className="row">
