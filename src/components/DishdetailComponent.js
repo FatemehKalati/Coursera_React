@@ -15,10 +15,11 @@ import {
   Col,
   Label,
 } from "reactstrap";
-import { Control, Form, Errors, actions } from "react-redux-form";
+import { Control, LocalForm, Errors, actions } from "react-redux-form";
 import { Link, useParams } from "react-router-dom";
 import { addComment } from "../redux/ActionCreators";
 import { Loading } from "./LoadingComponent";
+import { baseUrl } from "../shared/baseUrl";
 
 class CommentForm extends Component {
   constructor(props) {
@@ -179,7 +180,7 @@ class CommentForm extends Component {
 function RenderDish({ dish }) {
   return (
     <Card>
-      <CardImg top src={dish.image} alt={dish.name} />
+      <CardImg top src={baseUrl + dish.image} alt={dish.name} />
       <CardBody>
         <CardTitle>{dish.name}</CardTitle>
         <CardText>{dish.description}</CardText>
