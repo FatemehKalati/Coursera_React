@@ -15,9 +15,9 @@ import {
   Col,
   Label,
 } from "reactstrap";
-import { Control, LocalForm, Errors, actions } from "react-redux-form";
+import { Control, LocalForm, Errors } from "react-redux-form";
 import { Link, useParams } from "react-router-dom";
-import { addComment } from "../redux/ActionCreators";
+import { postComment } from "../redux/ActionCreators";
 import { Loading } from "./LoadingComponent";
 import { baseUrl } from "../shared/baseUrl";
 
@@ -58,10 +58,15 @@ class CommentForm extends Component {
   }
 
   handleSubmit(values) {
+    this.toggleModal();
     console.log("Current State is: " + JSON.stringify(values));
-    alert("Current State is: " + JSON.stringify(values));
-    this.props.resetFeedbackForm();
-    // event.preventDefault();
+    this.props.postComment(
+      this.props.dishId,
+      values.rating,
+      values.author,
+      values.comment
+    );
+    //event.preventDefault();
   }
 
   handleBlur = (field) => (evt) => {
@@ -96,79 +101,54 @@ class CommentForm extends Component {
         <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
           <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
           <ModalBody>
-            <LocalForm
-              model="feedback"
-              onSubmit={(values) => this.handleSubmit(values)}
-            >
-              <Row className="form-group">
-                <Label htmlFor="rating" md={2}>
-                  Rating{" "}
-                </Label>
-                <Col md={10}>
-                  <Control.select
-                    model=".rating"
-                    id="rating"
-                    name="rating"
-                    className="form-control"
-                  >
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </Control.select>
-                </Col>
-              </Row>
-              <Row className="form-group">
-                <Label htmlFor="author" md={2}>
-                  First Name
-                </Label>
-                <Col md={10}>
-                  <Control.text
-                    model=".author"
-                    id="author"
-                    name="author"
-                    placeholder="First Name"
-                    className="form-control"
-                    validators={{
-                      required,
-                      minLength: minLength(3),
-                      maxLength: maxLength(15),
-                    }}
-                  />
-                  <Errors
-                    className="text-danger"
-                    model=".author"
-                    show="touched"
-                    messages={{
-                      required: "Required",
-                      minLength: "Must be greater than 2 characters",
-                      maxLength: "Must be 15 characters or less",
-                    }}
-                  />
-                </Col>
-              </Row>
-              <Row className="form-group">
-                <Label htmlFor="comment" md={2}>
-                  Comment{" "}
-                </Label>
-                <Col md={10}>
-                  <Control.textarea
-                    model=".comment"
-                    id="comment"
-                    name="comment"
-                    rows="6"
-                    className="form-control"
-                  />
-                </Col>
-              </Row>
-              <Row className="form-group">
-                <Col md={{ size: 10, offset: 2 }}>
-                  <Button type="submit" color="primary">
-                    Submit{" "}
-                  </Button>
-                </Col>
-              </Row>
+            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+              <Label htmlFor="rating">Rating </Label>
+              <Control.select
+                model=".rating"
+                id="rating"
+                name="rating"
+                className="form-control"
+              >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </Control.select>
+              <Label htmlFor="author">Your Name</Label>
+              <Control.text
+                model=".author"
+                id="author"
+                name="author"
+                placeholder="Your Name"
+                className="form-control"
+                validators={{
+                  required,
+                  minLength: minLength(3),
+                  maxLength: maxLength(15),
+                }}
+              />
+              <Errors
+                className="text-danger"
+                model=".author"
+                show="touched"
+                messages={{
+                  required: "Required",
+                  minLength: "Must be greater than 2 characters",
+                  maxLength: "Must be 15 characters or less",
+                }}
+              />
+              <Label htmlFor="comment">Comment</Label>
+              <Control.textarea
+                model=".comment"
+                id="comment"
+                name="comment"
+                rows="6"
+                className="form-control"
+              />
+              <Button type="submit" color="primary">
+                Submit
+              </Button>
             </LocalForm>
           </ModalBody>
         </Modal>
@@ -189,7 +169,7 @@ function RenderDish({ dish }) {
   );
 }
 
-function RenderComments({ comments, addComment, dishId }) {
+function RenderComments({ comments, postComment, dishId }) {
   if (comments != null) {
     const list = comments.map((comment) => {
       return (
@@ -213,7 +193,7 @@ function RenderComments({ comments, addComment, dishId }) {
           {list}
           <li></li>
         </ul>
-        <CommentForm dishId={dishId} addComment={addComment} />
+        <CommentForm dishId={dishId} postComment={postComment} />
       </>
     );
   } else return <div></div>;
@@ -224,7 +204,7 @@ const DishDetail = (props) => {
   let dish = props.dishes.dishes.filter(
     (dish) => dish.id === parseInt(params.dishId, 10)
   )[0];
-  let comments = props.comments.filter(
+  let comments = props.comments.comments.filter(
     (comment) => comment.dishId === parseInt(params.dishId, 10)
   );
 
@@ -266,7 +246,7 @@ const DishDetail = (props) => {
           <div className="col-12 col-md-5 m-1">
             <RenderComments
               comments={comments}
-              addComment={props.addComment}
+              postComment={props.postComment}
               dishId={dish.id}
             />
           </div>
