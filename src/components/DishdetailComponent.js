@@ -11,13 +11,10 @@ import {
   ModalHeader,
   ModalBody,
   Button,
-  Row,
-  Col,
   Label,
 } from "reactstrap";
 import { Control, LocalForm, Errors } from "react-redux-form";
 import { Link, useParams } from "react-router-dom";
-import { postComment } from "../redux/ActionCreators";
 import { Loading } from "./LoadingComponent";
 import { baseUrl } from "../shared/baseUrl";
 
@@ -88,7 +85,6 @@ class CommentForm extends Component {
   }
 
   render() {
-    const errors = this.validate(this.state.author);
     const required = (val) => val && val.length;
     const maxLength = (len) => (val) => !val || val.length <= len;
     const minLength = (len) => (val) => val && val.length >= len;

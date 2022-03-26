@@ -40,10 +40,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 class Main extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.props.fetchDishes();
     this.props.fetchComments();
@@ -65,25 +61,6 @@ class Main extends Component {
           promoLoading={this.props.promotions.isLoading}
           promoErrMess={this.props.promotions.errMess}
           leader={this.props.leaders.filter((leader) => leader.featured)[0]}
-        />
-      );
-    };
-
-    const DishWithId = ({ match }) => {
-      return (
-        <DishDetail
-          dish={
-            this.props.dishes.dishes.filter(
-              (dish) => dish.id === parseInt(match.params.dishId, 10)
-            )[0]
-          }
-          isLoading={this.props.dishes.isLoading}
-          errMess={this.props.dishes.errMess}
-          comments={this.props.comments.comments.filter(
-            (comment) => comment.dishId === parseInt(match.params.dishId, 10)
-          )}
-          commentsErrMess={this.props.comments.errMess}
-          postComment={this.props.postComment}
         />
       );
     };
@@ -112,7 +89,10 @@ class Main extends Component {
               <DishDetail
                 dishes={this.props.dishes}
                 comments={this.props.comments}
+                isLoading={this.props.dishes.isLoading}
+                errMess={this.props.dishes.errMess}
                 postComment={this.props.postComment}
+                commentsErrMess={this.props.comments.errMess}
               />
             }
           />

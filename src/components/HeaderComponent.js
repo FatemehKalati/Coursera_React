@@ -3,8 +3,6 @@ import {
   Nav,
   Navbar,
   NavbarBrand,
-  NavbarToggler,
-  Collapse,
   NavItem,
   Modal,
   ModalHeader,
